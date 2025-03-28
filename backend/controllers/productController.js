@@ -70,12 +70,43 @@ const listProducts = async (req, res) => {
 
 // Function for removing a product
 const removeProduct = async (req, res) => {
-
+    try {
+        await productModel.findByIdAndDelete(req.body.id)
+        res.status(200).json({
+            success: true,
+            message: 'Product removed successfully'
+        })
+    } catch (error) {
+        console.log(error)
+        res.status(500).json({
+            success: false,
+            message: error.message
+        })
+    }
 }
 
 // Function for getting a product info
 const getProductInfo = async (req, res) => {
-
+    try {
+        const { productId } = req.body
+        const product = await productModel.findById(productId)
+        if (!product) {
+            return res.status(404).json({
+                success: false,
+                message: 'Product not found'
+            })
+        }
+        res.status(200).json({
+            success: true,
+            product
+        })
+    } catch (error) {
+        console.log(error)
+        res.status(500).json({
+            success: false,
+            message: error.message
+        })        
+    }
 }
 
 export { addProduct, listProducts, removeProduct, getProductInfo }
